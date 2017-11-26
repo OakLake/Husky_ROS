@@ -10,7 +10,7 @@
 		<arg name="laser_enabled" value="true"/>
 		
 	</include>
-	<node name="rviz" pkg="rviz" type="rviz" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find husky_highlevel_controller)/config/SLAM.rviz"/>
 </launch>
 
   
