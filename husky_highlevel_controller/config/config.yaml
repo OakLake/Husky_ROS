@@ -1,0 +1,6 @@
+topic:
+  name: /scan
+  q_size: 10
+gains:
+  linear: 0.5
+  angular: 0.3

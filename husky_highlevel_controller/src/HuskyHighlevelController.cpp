@@ -1,0 +1,82 @@
+#include "husky_highlevel_controller/HuskyHighlevelController.hpp"
+
+namespace husky_highlevel_controller {
+
+HuskyHighlevelController::HuskyHighlevelController(ros::NodeHandle& nodeHandle) :
+  nodeHandle_(nodeHandle)
+{
+  std::string topic;
+  int q_size;
+  nodeHandle.getParam("topic/name",topic);
+  nodeHandle.getParam("topic/q_size",q_size);
+  nodeHandle.getParam("gains/linear",k_dist);
+  nodeHandle.getParam("gains/angular",k_ang);
+
+  subscriber = nodeHandle.subscribe<sensor_msgs::LaserScan>(topic,q_size,&HuskyHighlevelController::laser_callback,this);
+  publisher = nodeHandle.advertise<geometry_msgs::Twist>("/cmd_vel",1);
+  marker_publisher =  nodeHandle.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
+
+}
+void HuskyHighlevelController::laser_callback(const sensor_msgs::LaserScan::ConstPtr& lsr_msg){
+  float min = 999999;
+  int ang_ix = 9999;
+
+  geometry_msgs::Twist msg_pub;
+  visualization_msgs::Marker msg_marker;
+	
+  for (int i = 0; i<lsr_msg->ranges.size(); i++ ){
+	if(lsr_msg->ranges[i] < min ){
+		min = lsr_msg->ranges[i];
+		ang_ix = i;
+	}
+  }
+  //ROS_INFO_STREAM("Min scan: " << min << std::endl );
+
+  
+  ang_pillar =  lsr_msg->angle_min + ang_ix*lsr_msg->angle_increment; // in rad
+  
+  
+
+  msg_pub.linear.x = k_dist*min;
+  msg_pub.linear.y = 0;
+  msg_pub.linear.z = 0;
+
+  msg_pub.angular.x = 0;
+  msg_pub.angular.y = 0;
+  msg_pub.angular.z = -k_ang*ang_pillar;
+  
+  publisher.publish(msg_pub);
+  ROS_INFO_STREAM("Ang: " << ang_pillar << " Ang_K: " << -k_ang*ang_pillar);
+
+  msg_marker.header.frame_id ="base_laser";
+  msg_marker.header.stamp = ros::Time();
+  msg_marker.ns = "my_namespace";
+  msg_marker.id = 0;
+  msg_marker.type = visualization_msgs::Marker::SPHERE; 
+  msg_marker.action = visualization_msgs::Marker::ADD;
+  msg_marker.pose.position.x = min*cos(ang_pillar);
+  msg_marker.pose.position.y = min*sin(ang_pillar);
+  msg_marker.pose.position.z = -2.0;
+  msg_marker.pose.orientation.x = 0.0;
+  msg_marker.pose.orientation.y = 0.0;
+  msg_marker.pose.orientation.z = 0.0;
+  msg_marker.pose.orientation.w = 1.0;
+  msg_marker.scale.x = 1.0;
+  msg_marker.scale.y = 1.0;
+  msg_marker.scale.z = 1.0;
+  msg_marker.color.a = 1.0;
+  msg_marker.color.r = 0.0;
+  msg_marker.color.g = 1.0;
+  msg_marker.color.b = 0.0;
+  //marker.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+  marker_publisher.publish(msg_marker);
+
+  
+}
+
+
+HuskyHighlevelController::~HuskyHighlevelController()
+{
+}
+
+} /* namespace */
