@@ -12,5 +12,5 @@ https://www.youtube.com/playlist?list=PLE-BQwvVGf8HOvwXPgtDfWoxd4Cc6ghiP
 --------------------
 
 ### Launch Files:
-- husky_HLC.launch : husky on Gazebo and Rviz with 'autonomous' navigation to pillar object.
+- husky_HLC  : husky on Gazebo and Rviz with 'autonomous' navigation to pillar object.
 - husky_SLAM : husky with teleop and ROS gmapping.
