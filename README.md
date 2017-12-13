@@ -1,6 +1,6 @@
 # Husky_ROS
 
-Based on ETH-Zürich "Programming for Robotics - ROS"
+Based on ETH-Zürich "Programming for Robotics - ROS", with personal additions for exploring ROS ecosystem.
 
 Course Link:<br/>
 http://www.rsl.ethz.ch/education-students/lectures/ros.html
