@@ -67,6 +67,10 @@ add_executable(nav_space_laser_server src/nav_space_laser_server.cpp)
 target_link_libraries(nav_space_laser_server ${catkin_LIBRARIES})
 add_dependencies(nav_space_laser_server ${catkin_EXPORTED_TARGETS})
 
+add_executable(nav_space_laser_client src/nav_space_laser_client.cpp)
+target_link_libraries(nav_space_laser_client ${catkin_LIBRARIES})
+add_dependencies(nav_space_laser_client ${catkin_EXPORTED_TARGETS})
+
 
 
 
